@@ -26,6 +26,7 @@ public class Morador extends Pessoa{
         }
     }
 
-
-
+    public Apartamento getApartamento() {
+        return apartamento;
+    }
 }
