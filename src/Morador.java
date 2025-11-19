@@ -29,4 +29,27 @@ public class Morador extends Pessoa{
     public Apartamento getApartamento() {
         return apartamento;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getQuantidadePets() {
+        return quantidadePets;
+    }
+
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public List<Pagamento> getPagamentos() {
+        return pagamentos;
+    }
+
+    public void setQuantidadePets(int quantidadePets) throws CampoInvalidoException {
+        if (quantidadePets < 0){
+            throw new CampoInvalidoException("A quantidade de pets não pode ser negativa.");
+        }
+        this.quantidadePets = quantidadePets;
+    }
 }
