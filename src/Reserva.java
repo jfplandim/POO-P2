@@ -31,7 +31,6 @@ public class Reserva {
     public String getResponsavel() {
         return responsavel;
     }
-
     public boolean isCancelada() {
         return cancelada;
     }
@@ -39,5 +38,32 @@ public class Reserva {
     public Date getDataHoraFim() {
         long milliseconds = dataHoraInicio.getTime() + (long)duracaoHoras * 60 * 60 * 1000;
         return new Date(milliseconds);
+    }
+    // Implementação da Regra: cancelamento com multa (48h)
+    /**
+     * Tenta cancelar a reserva e calcula se haverá multa.
+     * @param dataCancelamento A data/hora atual no momento do cancelamento.
+     * @return true se o cancelamento for bem-sucedido, false se já estiver cancelada.
+     */
+    public boolean cancelar(Date dataCancelamento) {
+        if (this.cancelada) {
+            System.out.println("Reserva já estava cancelada.");
+            return false;
+        }
+        long diferencaMs = this.dataHoraInicio.getTime() - dataCancelamento.getTime();
+        if (diferencaMs >= LIMITE_CANCELAMENTO_SEM_MULTA) {
+            // Cancelamento feito com mais de 48h de antecedência
+            System.out.println("Reserva cancelada sem multa.");
+        } else if (diferencaMs > 0) {
+            // Cancelamento feito com menos de 48h, mas antes do início
+            System.out.println("Reserva cancelada com multa.");
+            // Lógica para aplicar multa (ex: registrar no sistema financeiro, etc.)
+        } else {
+            // Tentativa de cancelar após o início da reserva
+            System.out.println("Não é possível cancelar uma reserva após ou no horário de início.");
+            return false;
+        }
+        this.cancelada = true;
+        return true;
     }
 }
