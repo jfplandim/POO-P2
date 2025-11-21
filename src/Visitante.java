@@ -15,7 +15,7 @@ public class Visitante extends Pessoa{
     public void registrarSaida() throws CampoInvalidoException{
         //verificação para impedir a saída duas vezes
         if (this.dataHoraSaida != null){
-            throw new CampoInvalidoException("O visitante já teve sua saída registrada.")
+            throw new CampoInvalidoException("O visitante já teve sua saída registrada.");
         }
         this.dataHoraSaida = new Date();
     }
