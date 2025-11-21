@@ -12,11 +12,33 @@ public class Visitante extends Pessoa{
         this.moradorVisitado = moradorVisitado;
     }
 
+    public Date getDataHoraEntrada() {
+        return dataHoraEntrada;
+    }
+
+    public Date getDataHoraSaida() {
+        return dataHoraSaida;
+    }
+
+    public Morador getMoradorVisitado() {
+        return moradorVisitado;
+    }
+
     public void registrarSaida() throws CampoInvalidoException{
         //verificação para impedir a saída duas vezes
         if (this.dataHoraSaida != null){
             throw new CampoInvalidoException("O visitante já teve sua saída registrada.");
         }
         this.dataHoraSaida = new Date();
+    }
+    //metodo para formatar e gerar o relatorio de visita
+        @Override
+    public String toString(){
+        String saidaFormatada=(dataHoraSaida !=null)? dataHoraSaida.toString():"Ainda no condomínio";
+        return "Visitante" + getNome() +
+                "Doc: " + getDocumento() +
+                "Morador: "+ moradorVisitado.getNome() +
+                "Entrada: " + dataHoraEntrada +
+                "Saída: "+ saidaFormatada;
     }
 }
