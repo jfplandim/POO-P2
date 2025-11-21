@@ -12,6 +12,18 @@ public class Visitante extends Pessoa{
         this.moradorVisitado = moradorVisitado;
     }
 
+    public void setDataHoraEntrada(Date dataHoraEntrada) {
+        this.dataHoraEntrada = dataHoraEntrada;
+    }
+
+    public void setDataHoraSaida(Date dataHoraSaida) {
+        this.dataHoraSaida = dataHoraSaida;
+    }
+
+    public void setMoradorVisitado(Morador moradorVisitado) {
+        this.moradorVisitado = moradorVisitado;
+    }
+
     public Date getDataHoraEntrada() {
         return dataHoraEntrada;
     }
