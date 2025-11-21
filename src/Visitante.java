@@ -11,6 +11,13 @@ public class Visitante extends Pessoa{
         this.dataHoraSaida = null;   //visitante ainda não saiu
         this.moradorVisitado = moradorVisitado;
     }
+    public Visitante(String nome, String documento, String telefone,Morador moradorVisitado, Date entrada, Date saida)throws CampoInvalidoException{
+        super(nome,documento,telefone);
+        this.dataHoraEntrada=entrada;
+        this.dataHoraSaida=saida;
+        this.moradorVisitado=moradorVisitado;
+    }
+
 
     public void setDataHoraEntrada(Date dataHoraEntrada) {
         this.dataHoraEntrada = dataHoraEntrada;
