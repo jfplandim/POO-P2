@@ -1,4 +1,6 @@
 import javax.xml.crypto.Data;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Pagamento {
@@ -10,6 +12,9 @@ public class Pagamento {
     private final Status status;
     private  Morador morador;
     private double multa;
+    private boolean manutencao;
+
+
 
     public enum Status{
         pago,
@@ -34,13 +39,18 @@ public class Pagamento {
        this.multa+=multa;
     }
 
-    public boolean Atrasado(Date hoje){
-        if(this.status==Status.pago){
-            return false;
-        }
-        return hoje.after(this.dataVencimento);//O metodo after() compara as datas e verifica se a data atual e postarior a data de vencimento.
-
+    public  boolean Atrasado(){
+       if(!recebido()&& dataVencimento.toInstant().isBefore(Instant.from(LocalDate.now()))){
+           return true;
+       }
+       return false;
     }
+
+    public boolean recebido(){
+        return dataPagamento!=null;
+    }
+
+    public boolean isManutencao(){return  manutencao;}
 
     public int getId() {return Id;}
 
