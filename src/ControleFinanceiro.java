@@ -110,16 +110,19 @@ public class ControleFinanceiro {
 
    }
 
-   public void gerarRelatorioTXT(){
-        String relatorio=gerarRelatorio();
+    public void salvarRelatorioFinanceiroTxt() {
 
-        try(PrintWriter leitor= new PrintWriter(new PrintWriter(financeiro))){
-            leitor.print(relatorio);
-            System.out.println("Relatorio financeiro salvo com sucesso em: "+financeiro);
-        }catch (IOException e){
-            System.err.println("Erro ao gerar relatorio"+e.getMessage());
+        String relatorio = gerarRelatorio();
+
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(financeiro))) {
+            writer.print(relatorio);
+            System.out.println("\nRelatório financeiro resumido salvo em: " + financeiro);
+
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar o relatório financeiro TXT: " + e.getMessage());
         }
-   }
+    }
 
 
 }

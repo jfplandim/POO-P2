@@ -7,6 +7,7 @@ public class MenuPagamentos {
 
     private List<Pagamento> pagamentos;
     private List<Morador> moradores;
+    ControleFinanceiro CF=new ControleFinanceiro();
 
     public MenuPagamentos(List<Pagamento> pagamentos, List<Morador> moradores) {
         this.pagamentos = pagamentos;
@@ -38,8 +39,7 @@ public class MenuPagamentos {
             switch (opcao) {
                 case 1 -> registrarPagamento();
                 case 2 -> listarPagamentos();
-                case 3 -> listarRecebidos();
-                case 4 -> listarAtrasados();
+                case 3-> GerarRelatorioTXT();
                 case 0 -> System.out.println("Voltando...");
                 default -> System.out.println("Opção inválida!");
             }
@@ -136,49 +136,9 @@ public class MenuPagamentos {
         }
     }
 
-    // =========================================================
-    // 3 - Pagamentos recebidos
-    // =========================================================
-    private void listarRecebidos() {
-        System.out.println("\n=== PAGAMENTOS RECEBIDOS ===");
-
-        boolean achou = false;
-
-        for (Pagamento p : pagamentos) {
-            if (p.recebido()) {
-                achou = true;
-                System.out.println("ID: " + p.getId() +
-                        " | Valor: R$ " + p.getValor() +
-                        " | Documento: " + p.getMorador().getDocumento());
-            }
-        }
-
-        if (!achou) {
-            System.out.println("Nenhum pagamento recebido.");
-        }
-    }
-
-    // =========================================================
-    // 4 - Pagamentos atrasados
-    // =========================================================
-    private void listarAtrasados() {
-        System.out.println("\n=== PAGAMENTOS ATRASADOS ===");
-
-        boolean achou = false;
-
-        for (Pagamento p : pagamentos) {
-            if (p.Atrasado()) {
-                achou = true;
-                System.out.println("ID: " + p.getId() +
-                        " | Valor: R$ " + p.getValor() +
-                        " | Documento: " + p.getMorador().getDocumento());
-            }
-        }
-
-        if (!achou) {
-            System.out.println("Nenhum pagamento atrasado.");
-        }
-    }
+  private void GerarRelatorioTXT(){
+        CF.salvarRelatorioFinanceiroTxt();
+  }
 
 
 }
