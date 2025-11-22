@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -29,11 +30,59 @@ public class SistemaCondominio {
         this.chamados = new ArrayList<>();
 
         this.menuMoradores = new MenuMoradores(moradores, apartamentos);
-        menuApartamentos = new MenuApartamentos(apartamentos);
-        menuVisitantes = new MenuVisitantes(visitantes, moradores);
-        menuReservas = new MenuReservas(reservas);
-        menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(), moradores);
+        this.menuApartamentos = new MenuApartamentos(apartamentos);
+        this.menuVisitantes = new MenuVisitantes(visitantes, moradores);
+        this.menuReservas = new MenuReservas(reservas);
+        this.menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(), moradores);
 
+        carregarTodosDados();
+
+    }
+
+    // Método para salvar todos os dados
+    public void salvarTodosDados() {
+        try {
+            Persistencia.salvarApartamentos(apartamentos, "apartamentos.txt");
+            Persistencia.salvarMoradores(moradores, "moradores.txt");
+            System.out.println("\n✓ Dados salvos com sucesso!");
+        } catch (IOException e) {
+            System.err.println("\n✗ Erro ao salvar dados: " + e.getMessage());
+        }
+    }
+
+    // Método para carregar todos os dados
+    public void carregarTodosDados() {
+        try {
+            System.out.println("\n=== INICIANDO CARREGAMENTO ===");
+
+            // Ordem importante: apartamentos primeiro!
+            apartamentos = Persistencia.carregarApartamentos("apartamentos.txt");
+            System.out.println("✓ Apartamentos carregados: " + apartamentos.size());
+
+            moradores = Persistencia.carregarMoradores("moradores.txt", apartamentos);
+            System.out.println("✓ Moradores carregados: " + moradores.size());
+
+            // DEBUG: Verificar se os moradores estão realmente na lista
+            System.out.println("\n--- DEBUG: Lista de Moradores ---");
+            for (Morador m : moradores) {
+                System.out.println("ID: " + m.getId() + " | Nome: " + m.getNome());
+            }
+            System.out.println("--- FIM DEBUG ---\n");
+
+            // Atualizar os menus com as listas carregadas
+            this.menuMoradores = new MenuMoradores(moradores, apartamentos);
+            this.menuApartamentos = new MenuApartamentos(apartamentos);
+
+        } catch (IOException e) {
+            System.err.println("\n⚠ Arquivos não encontrados: " + e.getMessage());
+            System.err.println("Iniciando com dados vazios.");
+            apartamentos = new ArrayList<>();
+            moradores = new ArrayList<>();
+        } catch (CampoInvalidoException e) {
+            System.err.println("\n✗ Erro nos dados: " + e.getMessage());
+            apartamentos = new ArrayList<>();
+            moradores = new ArrayList<>();
+        }
     }
 
     public void abrirChamadoManutencao() {
@@ -225,6 +274,7 @@ public class SistemaCondominio {
             System.out.println("4 - Reservas");
             System.out.println("5 - Pagamentos");
             System.out.println("6 - Manutenção");
+            System.out.println("7 - Salvar Dados");
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -261,6 +311,10 @@ public class SistemaCondominio {
                     menuManutencao();
                     break;
 
+                case 7:
+                    salvarTodosDados();
+                    break;
+
                 case 0:
                     System.out.println("Encerrando sistema...");
                     break;
@@ -271,6 +325,7 @@ public class SistemaCondominio {
         }
 
     }
+
 
     public static void main(String[] args) {
         SistemaCondominio sistema = new SistemaCondominio();

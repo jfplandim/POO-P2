@@ -86,6 +86,14 @@ public class Persistencia {
             Morador m = new Morador(id, nome, documento, telefone, quantidadePets);
             moradores.add(m);
             linha = br.readLine();
+
+            m.setApartamento(apartamentoEncontrado);
+            apartamentoEncontrado.adicionarMorador(m);
+
+            // Adicionar à lista de moradores
+            moradores.add(m);
+
+            linha = br.readLine();
         }
         br.close();
         return moradores;
