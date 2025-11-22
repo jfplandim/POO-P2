@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class SistemaCondominio {
 
     }
 
-    // Método para salvar todos os dados
+    // Metodo para salvar todos os dados
     public void salvarTodosDados() {
         try {
             Persistencia.salvarApartamentos(apartamentos, "apartamentos.txt");
@@ -50,7 +51,7 @@ public class SistemaCondominio {
         }
     }
 
-    // Método para carregar todos os dados
+    // Metodo para carregar todos os dados
     public void carregarTodosDados() {
         try {
             System.out.println("\n=== INICIANDO CARREGAMENTO ===");
@@ -65,6 +66,8 @@ public class SistemaCondominio {
             // Atualizar os menus com as listas carregadas
             this.menuMoradores = new MenuMoradores(moradores, apartamentos);
             this.menuApartamentos = new MenuApartamentos(apartamentos);
+            this.menuVisitantes = new MenuVisitantes(visitantes,moradores);
+            this.menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(),moradores);
 
         } catch (IOException e) {
             System.err.println("\n⚠ Arquivos não encontrados: " + e.getMessage());
@@ -90,10 +93,16 @@ public class SistemaCondominio {
 
         //cria o chamado automaticamente com ID gerado
         ChamadoManutencao chamado = new ChamadoManutencao(area, desc);
-        //adiciona na lista geral do sistema
-        this.controleFinanceiro.getChamados().add(chamado);
-        System.out.println("\nChamdado criado com sucesso");
+
+        this.chamados.add(chamado);
+
+        if (this.controleFinanceiro != null && this.controleFinanceiro.getChamados() != null) {
+            this.controleFinanceiro.getChamados().add(chamado);
+        }
+
+        System.out.println("\n✓ Chamado criado com sucesso!");
         System.out.println(chamado);
+
     }
 
     private ChamadoManutencao buscarChamadoPorId(int id) throws OperacaoInvalidaException {
@@ -110,7 +119,7 @@ public class SistemaCondominio {
         System.out.println("\n=== ATUALIZAR CHAMADO ===");
 
         try {
-            System.out.print("Informe o ID do chamado: ");
+            System.out.print("Informe o numero do chamado: ");
             int id = Integer.parseInt(sc.nextLine());
 
             // Busca com exceção

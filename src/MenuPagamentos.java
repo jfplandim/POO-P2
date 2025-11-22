@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Date;
@@ -9,7 +10,8 @@ public class MenuPagamentos {
 
     public MenuPagamentos(List<Pagamento> pagamentos, List<Morador> moradores) {
         this.pagamentos = pagamentos;
-        this.moradores = moradores;
+        this.moradores =moradores;
+
     }
 
     public void exibir() {
@@ -101,6 +103,7 @@ public class MenuPagamentos {
             }
 
             pagamentos.add(p);
+            morador.getPagamentos().add(p);
 
             System.out.println("Pagamento registrado com sucesso!");
 
@@ -176,4 +179,6 @@ public class MenuPagamentos {
             System.out.println("Nenhum pagamento atrasado.");
         }
     }
+
+
 }
