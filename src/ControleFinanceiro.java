@@ -2,12 +2,14 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.FileWriter;
 
 
 public class ControleFinanceiro {
     private List<Pagamento> pagamentos;
     private List<ChamadoManutencao> chamados;
-    private final String arquivo="arquivos-pagamentos";
+    private final String financeiro="arquivos-pagamentos";
 
 
     public List<Pagamento> getPagamentos() {
@@ -79,22 +81,22 @@ public class ControleFinanceiro {
     }
 
    public void salvarPagamentos(){
-        try(ObjectOutputStream o=new ObjectOutputStream(new FileOutputStream(arquivo))){
+        try(ObjectOutputStream o=new ObjectOutputStream(new FileOutputStream(financeiro))){
             o.writeObject( pagamentos);
-            System.out.println("arquivosalvo com sucesso: "+arquivo);
+            System.out.println("arquivo salvo com sucesso: "+financeiro);
         } catch (IOException e) {
-            System.err.println("Algo deu errado na criacao do arquivo: "+arquivo);
+            System.err.println("Algo deu errado na criacao do arquivo: "+financeiro);
         }
 
    }
 
    public List<Pagamento>carregarPagamentos(){
-       File novoArquivo=new File(arquivo);
+       File novoArquivo=new File(financeiro);
        if(!novoArquivo.exists()){
            System.out.println("arquivo de persistencia nao encontrado");
            return new ArrayList<>();
        }
-       try(ObjectInputStream a= new ObjectInputStream(new FileInputStream(arquivo))){
+       try(ObjectInputStream a= new ObjectInputStream(new FileInputStream(financeiro))){
            System.out.println("pagamento carregado com sucesso");
 
            List<Pagamento> pagamentos1 = (List<Pagamento>) a.readObject();
@@ -106,6 +108,17 @@ public class ControleFinanceiro {
 
        }
 
+   }
+
+   public void gerarRelatorioTXT(){
+        String relatorio=gerarRelatorio();
+
+        try(PrintWriter leitor= new PrintWriter(new PrintWriter(financeiro))){
+            leitor.print(relatorio);
+            System.out.println("Relatorio financeiro salvo com sucesso em: "+financeiro);
+        }catch (IOException e){
+            System.err.println("Erro ao gerar relatorio"+e.getMessage());
+        }
    }
 
 
