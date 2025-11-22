@@ -93,10 +93,16 @@ public class SistemaCondominio {
 
         //cria o chamado automaticamente com ID gerado
         ChamadoManutencao chamado = new ChamadoManutencao(area, desc);
-        //adiciona na lista geral do sistema
-        this.controleFinanceiro.getChamados().add(chamado);
-        System.out.println("\nChamdado criado com sucesso");
+
+        this.chamados.add(chamado);
+
+        if (this.controleFinanceiro != null && this.controleFinanceiro.getChamados() != null) {
+            this.controleFinanceiro.getChamados().add(chamado);
+        }
+
+        System.out.println("\n✓ Chamado criado com sucesso!");
         System.out.println(chamado);
+
     }
 
     private ChamadoManutencao buscarChamadoPorId(int id) throws OperacaoInvalidaException {
@@ -113,7 +119,7 @@ public class SistemaCondominio {
         System.out.println("\n=== ATUALIZAR CHAMADO ===");
 
         try {
-            System.out.print("Informe o ID do chamado: ");
+            System.out.print("Informe o numero do chamado: ");
             int id = Integer.parseInt(sc.nextLine());
 
             // Busca com exceção
