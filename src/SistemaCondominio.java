@@ -21,8 +21,8 @@ public class SistemaCondominio {
 
 
     public SistemaCondominio() {
-        this.moradores = new ArrayList<>();
-        this.apartamentos = new ArrayList<>();
+        //this.moradores = new ArrayList<>();
+        //this.apartamentos = new ArrayList<>();
         this.visitantes = new ArrayList<>();
         this.reservas = new ArrayList<>();
         this.areasComuns = new ArrayList<>();
@@ -61,13 +61,6 @@ public class SistemaCondominio {
 
             moradores = Persistencia.carregarMoradores("moradores.txt", apartamentos);
             System.out.println("✓ Moradores carregados: " + moradores.size());
-
-            // DEBUG: Verificar se os moradores estão realmente na lista
-            System.out.println("\n--- DEBUG: Lista de Moradores ---");
-            for (Morador m : moradores) {
-                System.out.println("ID: " + m.getId() + " | Nome: " + m.getNome());
-            }
-            System.out.println("--- FIM DEBUG ---\n");
 
             // Atualizar os menus com as listas carregadas
             this.menuMoradores = new MenuMoradores(moradores, apartamentos);
