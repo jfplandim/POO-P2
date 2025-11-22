@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class SistemaCondominio {
 
     }
 
-    // Método para salvar todos os dados
+    // Metodo para salvar todos os dados
     public void salvarTodosDados() {
         try {
             Persistencia.salvarApartamentos(apartamentos, "apartamentos.txt");
@@ -50,7 +51,7 @@ public class SistemaCondominio {
         }
     }
 
-    // Método para carregar todos os dados
+    // Metodo para carregar todos os dados
     public void carregarTodosDados() {
         try {
             System.out.println("\n=== INICIANDO CARREGAMENTO ===");
@@ -66,6 +67,7 @@ public class SistemaCondominio {
             this.menuMoradores = new MenuMoradores(moradores, apartamentos);
             this.menuApartamentos = new MenuApartamentos(apartamentos);
             this.menuVisitantes = new MenuVisitantes(visitantes,moradores);
+            this.menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(),moradores);
 
         } catch (IOException e) {
             System.err.println("\n⚠ Arquivos não encontrados: " + e.getMessage());
