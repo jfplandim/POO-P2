@@ -1,20 +1,10 @@
-public class Chamado {
-    private  final String descricao;
-    private String status;
+import java.io.Serializable;
 
-    //classe de apoio para a classe controleFinanceiro.
-    public Chamado(String descricao){
-        this.descricao=descricao;
-        this.status="aberto";
-    }
+class Chamado implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String status; // Aberto, Em andamento, Fechado
 
-    public String getDescricao(){return descricao;}
-    public String getStatus(){return status;}
+    public Chamado(String status) { this.status = status; }
 
-    public void fecharChamado(){
-        this.status="fechado";
-    }
-
-
-
+    public String getStatus() { return status; }
 }

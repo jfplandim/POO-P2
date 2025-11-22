@@ -1,9 +1,13 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
+
 
 public class controleFinanceiro {
     private List<Pagamento> pagamentos;
     private List<Chamado> chamados;
+    private final String arquivo="arquivos-pagamentos";
 
 
     public List<Pagamento> getPagamentos() {
@@ -16,11 +20,11 @@ public class controleFinanceiro {
 
     //construtor
     public controleFinanceiro(){
-        this.pagamentos= new ArrayList<>();
+        this.pagamentos= carregarPagamentos();
         this.chamados=new ArrayList<>();
     }
 
-    public double calcularTotalRecebido(){
+    public double calcularTotalRecebido()  {
         return  pagamentos.stream()
                 .filter(Pagamento::recebido)
                 .mapToDouble(Pagamento::getValor)
@@ -28,13 +32,15 @@ public class controleFinanceiro {
     }
 
     public double calcularAtraso(){
+
         return pagamentos.stream()
                 .filter(Pagamento::Atrasado)
                 .mapToDouble(Pagamento::getValor)
                 .sum();
 
     }
-    public double calcularGastosManutencao() {
+    public double calcularGastosManutencao(){
+
         return pagamentos.stream()
                 .filter(Pagamento::isManutencao)
                 .mapToDouble(Pagamento::getValor)
@@ -71,5 +77,36 @@ public class controleFinanceiro {
                 chamadosAbertos
         );
     }
+
+   public void salvarPagamentos(){
+        try(ObjectOutputStream o=new ObjectOutputStream(new FileOutputStream(arquivo))){
+            o.writeObject( pagamentos);
+            System.out.println("arquivosalvo com sucesso: "+arquivo);
+        } catch (IOException e) {
+            System.err.println("Algo deu errado na criacao do arquivo: "+arquivo);
+        }
+
+   }
+
+   public List<Pagamento>carregarPagamentos(){
+       File novoArquivo=new File(arquivo);
+       if(!novoArquivo.exists()){
+           System.out.println("arquivo de persistencia nao encontrado");
+           return new ArrayList<>();
+       }
+       try(ObjectInputStream a= new ObjectInputStream(new FileInputStream(arquivo))){
+           System.out.println("pagamento carregado com sucesso");
+
+           List<Pagamento> pagamentos1 = (List<Pagamento>) a.readObject();
+           return pagamentos1;
+
+       }catch (IOException| ClassNotFoundException e ){
+           System.err.println("Erro ao carregar o arquivo");
+           return new ArrayList<>();
+
+       }
+
+   }
+
 
 }

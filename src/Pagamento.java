@@ -1,9 +1,9 @@
-import javax.xml.crypto.Data;
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
 
-public class Pagamento {
+public class Pagamento implements Serializable{
     private final int Id;
     private final String mes;
     private double valor;
@@ -66,3 +66,4 @@ public class Pagamento {
 
     public Morador getMorador() {return morador;}
 }
+
