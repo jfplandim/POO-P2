@@ -6,10 +6,10 @@ import java.util.Scanner;
 
 public class MenuReservas {
 
-    private List<Reserva> reservas;
+    private GerenciadorReservas gerenciador;
 
-    public MenuReservas(List<Reserva> reservas) {
-        this.reservas = reservas;
+    public MenuReservas(GerenciadorReservas gerenciador) {
+        this.gerenciador = gerenciador;
     }
 
     public void exibir() {
@@ -41,12 +41,33 @@ public class MenuReservas {
         }
     }
 
-    //metodos
     private void criarReserva() {
         Scanner sc = new Scanner(System.in);
 
         try {
             System.out.println("\n=== CRIAR RESERVA ===");
+            System.out.println("\n=== ESCOLHA A ÁREA ===");
+            System.out.println("1 - Academia");
+            System.out.println("2 - Piscina");
+            System.out.println("3 - Salão de Festas");
+            System.out.print("Opção: ");
+            int opcaoArea = Integer.parseInt(sc.nextLine());
+
+            AreaReservavel area;
+            switch (opcaoArea) {
+                case 1:
+                    area = AreaReservavel.ACADEMIA;
+                    break;
+                case 2:
+                    area = AreaReservavel.PISCINA;
+                    break;
+                case 3:
+                    area = AreaReservavel.SALAO_FESTAS;
+                    break;
+                default:
+                    System.out.println("Opção inválida!");
+                    return;
+            }
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
@@ -60,13 +81,14 @@ public class MenuReservas {
             System.out.print("Responsável pela reserva: ");
             String responsavel = sc.nextLine();
 
-            // CHAMA O CONSTRUTOR DA CLASSE RESERVA
-            Reserva r = new Reserva(dataInicio, duracao, responsavel);
-            reservas.add(r);
+            // USA O GERENCIADOR PARA ADICIONAR A RESERVA (com validação de conflitos)
+            boolean sucesso = gerenciador.adicionarReserva(dataInicio, duracao, responsavel, area);
 
-            System.out.println("\nReserva criada com sucesso!");
-            System.out.println("Início: " + sdf.format(r.getDataHoraInicio()));
-            System.out.println("Fim: " + sdf.format(r.getDataHoraFim()));
+            if (sucesso) {
+                System.out.println("\n✓ Reserva criada com sucesso!");
+                System.out.println("Área: " + area.getNome());
+                System.out.println("Início: " + sdf.format(dataInicio));
+            }
 
         } catch (ParseException e) {
             System.out.println("Formato de data inválido!");
@@ -75,57 +97,70 @@ public class MenuReservas {
         }
     }
 
-
     private void listarReservas() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
         System.out.println("\n=== LISTA DE RESERVAS ===");
 
-        if (reservas.isEmpty()) {
-            System.out.println("Nenhuma reserva cadastrada.");
+        List<Reserva> reservasAtivas = gerenciador.listarReservasAtivas();
+
+        if (reservasAtivas.isEmpty()) {
+            System.out.println("Nenhuma reserva ativa cadastrada.");
             return;
         }
 
-        for (Reserva r : reservas) {
+        for (Reserva r : reservasAtivas) {
             System.out.println("-------------------------------------");
+            System.out.println("ID: " + r.getId());
+            System.out.println("Área: " + r.getArea().getNome());
             System.out.println("Responsável: " + r.getResponsavel());
             System.out.println("Início: " + sdf.format(r.getDataHoraInicio()));
             System.out.println("Fim: " + sdf.format(r.getDataHoraFim()));
             System.out.println("Duração: " + r.getDuracaoHoras() + "h");
-            System.out.println("Status: " + (r.isCancelada() ? "Cancelada" : "Ativa"));
         }
     }
 
-
     private void cancelarReserva() {
         Scanner sc = new Scanner(System.in);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
         System.out.println("\n=== CANCELAR RESERVA ===");
 
-        System.out.print("Responsável da reserva: ");
-        String resp = sc.nextLine();
+        System.out.print("Digite o nome do responsável: ");
+        String responsavel = sc.nextLine();
 
-        Reserva reservaEncontrada = null;
+        // Busca reservas do responsável
+        List<Reserva> reservasDoResponsavel = gerenciador.listarReservasPorResponsavel(responsavel);
 
-        for (Reserva r : reservas) {
-            if (r.getResponsavel().equalsIgnoreCase(resp)) {
-                reservaEncontrada = r;
-                break;
-            }
-        }
-
-        if (reservaEncontrada == null) {
-            System.out.println("Reserva não encontrada.");
+        if (reservasDoResponsavel.isEmpty()) {
+            System.out.println("Nenhuma reserva encontrada para o responsável: " + responsavel);
             return;
         }
 
-        try {
-            // 🌟 AQUI É ONDE USAMOS O MÉTODO DA CLASSE RESERVA
-            reservaEncontrada.cancelar(new Date());
-            System.out.println("Reserva cancelada com sucesso!");
+        // Exibe as reservas do responsável
+        System.out.println("\n=== RESERVAS DE " + responsavel.toUpperCase() + " ===");
+        for (Reserva r : reservasDoResponsavel) {
+            System.out.println("-------------------------------------");
+            System.out.println("ID: " + r.getId());
+            System.out.println("Área: " + r.getArea().getNome());
+            System.out.println("Início: " + sdf.format(r.getDataHoraInicio()));
+            System.out.println("Fim: " + sdf.format(r.getDataHoraFim()));
+            System.out.println("Duração: " + r.getDuracaoHoras() + "h");
+        }
 
-        } catch (CampoInvalidoException e) {
-            System.out.println("Erro: " + e.getMessage());
+        // Permite escolher qual cancelar
+        System.out.print("\nDigite o ID da reserva que deseja cancelar: ");
+        try {
+            int idEscolhido = Integer.parseInt(sc.nextLine());
+
+            boolean cancelada = gerenciador.cancelarReserva(idEscolhido);
+
+            if (cancelada) {
+                System.out.println("✓ Reserva cancelada com sucesso!");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("ID inválido!");
         }
     }
 }
