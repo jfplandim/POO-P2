@@ -8,7 +8,7 @@ public class SistemaCondominio {
     private List<Morador> moradores;
     private List<Apartamento> apartamentos;
     private List<Visitante> visitantes;
-    private List<Reserva> reservas;
+    private GerenciadorReservas gerenciadorReservas;
     private List<AreaComum> areasComuns;
     private ControleFinanceiro controleFinanceiro;
     private List<ChamadoManutencao> chamados;
@@ -18,14 +18,9 @@ public class SistemaCondominio {
     private MenuReservas menuReservas;
     private MenuPagamentos menuPagamentos;
 
-
-
-
     public SistemaCondominio() {
-        //this.moradores = new ArrayList<>();
-        //this.apartamentos = new ArrayList<>();
         this.visitantes = new ArrayList<>();
-        this.reservas = new ArrayList<>();
+        this.gerenciadorReservas = new GerenciadorReservas();
         this.areasComuns = new ArrayList<>();
         this.controleFinanceiro = new ControleFinanceiro();
         this.chamados = new ArrayList<>();
@@ -33,11 +28,10 @@ public class SistemaCondominio {
         this.menuMoradores = new MenuMoradores(moradores, apartamentos);
         this.menuApartamentos = new MenuApartamentos(apartamentos);
         this.menuVisitantes = new MenuVisitantes(visitantes, moradores);
-        this.menuReservas = new MenuReservas(reservas);
+        this.menuReservas = new MenuReservas(gerenciadorReservas);
         this.menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(), moradores);
 
         carregarTodosDados();
-
     }
 
     // Metodo para salvar todos os dados
@@ -263,7 +257,6 @@ public class SistemaCondominio {
         }
     }
 
-
     public void exibirMenu() {
         Scanner scanner = new Scanner(System.in);
         int opcao = -1;
@@ -325,9 +318,7 @@ public class SistemaCondominio {
                     System.out.println("Opção inválida!");
             }
         }
-
     }
-
 
     public static void main(String[] args) {
         SistemaCondominio sistema = new SistemaCondominio();
