@@ -5,53 +5,58 @@ import java.util.List;
 public class Persistencia {
 
     public static void salvarApartamentos(List<Apartamento> apartamentos, String caminhoArquivo) throws IOException {
-        //abrir o arquivo para escrever
         BufferedWriter bw = new BufferedWriter(new FileWriter(caminhoArquivo));
         for (Apartamento ap : apartamentos) {
-            //lendo a linha dentro do arquivo
             String linha = ap.getNumero() + ";" + ap.getBloco() + ";" + ap.getVagasGaragem();
-            //gravar a linha
             bw.write(linha);
             bw.newLine();
         }
         bw.close();
+        System.out.println("✓ " + apartamentos.size() + " apartamentos salvos em " + caminhoArquivo);
     }
 
     public static void salvarMoradores(List<Morador> moradores, String caminhoArquivo) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(caminhoArquivo));
+        int contador = 0;
         for (Morador m : moradores) {
-            String linha = m.getId() + ";"
-                    + m.getNome() + ";"
-                    + m.getDocumento() + ";"
-                    + m.getTelefone() + ";"
-                    + m.getQuantidadePets() + ";"
-                    + m.getApartamento().getNumero() + ";"
-                    + m.getApartamento().getBloco();
-            bw.write(linha);
-            bw.newLine();
+            // Verifica se o morador tem apartamento antes de salvar
+            if (m.getApartamento() != null) {
+                String linha = m.getId() + ";"
+                        + m.getNome() + ";"
+                        + m.getDocumento() + ";"
+                        + m.getTelefone() + ";"
+                        + m.getQuantidadePets() + ";"
+                        + m.getApartamento().getNumero() + ";"
+                        + m.getApartamento().getBloco();
+                bw.write(linha);
+                bw.newLine();
+                contador++;
+            }
         }
         bw.close();
+        System.out.println("✓ " + contador + " moradores salvos em " + caminhoArquivo);
     }
 
     public static List<Apartamento> carregarApartamentos(String caminhoArquivo) throws IOException {
-        //lista que sera retornada
         List<Apartamento> apartamentos = new ArrayList<>();
-        //abrir o arquivo para ler
         BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo));
-        //tenta ler a primeira linha do arquivo
         String linha = br.readLine();
+
         while (linha != null) {
-            String[] partes = linha.split(";");
-            //divide a linha
-            int numero = Integer.parseInt(partes[0]);
-            String bloco = partes[1];
-            int vagasGaragem = Integer.parseInt(partes[2]);
-            //adicionar o objeto na lista
-            Apartamento ap = new Apartamento(numero, bloco, vagasGaragem);
-            apartamentos.add(ap);
+            linha = linha.trim(); // Remove espaços extras
+            if (!linha.isEmpty()) { // Ignora linhas vazias
+                String[] partes = linha.split(";");
+                int numero = Integer.parseInt(partes[0].trim());
+                String bloco = partes[1].trim();
+                int vagasGaragem = Integer.parseInt(partes[2].trim());
+
+                Apartamento ap = new Apartamento(numero, bloco, vagasGaragem);
+                apartamentos.add(ap);
+            }
             linha = br.readLine();
         }
         br.close();
+        System.out.println("✓ " + apartamentos.size() + " apartamentos lidos de " + caminhoArquivo);
         return apartamentos;
     }
 
@@ -59,43 +64,69 @@ public class Persistencia {
         List<Morador> moradores = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo));
         String linha = br.readLine();
-        while (linha != null) {
-            String[] partes = linha.split(";");
+        int linhaNumero = 0;
 
-            int id = Integer.parseInt(partes[0]);
-            String nome = partes[1];
-            String documento = partes[2];
-            String telefone = partes[3];
-            int quantidadePets = Integer.parseInt(partes[4]);
-            int numeroApto = Integer.parseInt(partes[5]);
-            String blocoApto = partes[6];
-            //encontrar o apartamento correto
-            Apartamento apartamentoEncontrado = null;
-            for (Apartamento ap : apartamentos) {
-                if (ap.getNumero() == numeroApto && ap.getBloco().equals(blocoApto)) {
-                    apartamentoEncontrado = ap;
-                    break;
+        while (linha != null) {
+            linhaNumero++;
+            linha = linha.trim(); // Remove espaços extras
+
+            if (!linha.isEmpty()) { // Ignora linhas vazias
+                try {
+                    String[] partes = linha.split(";");
+
+                    if (partes.length != 7) {
+                        System.err.println("⚠ Linha " + linhaNumero + " com formato incorreto (esperado 7 campos, encontrado " + partes.length + ")");
+                        linha = br.readLine();
+                        continue;
+                    }
+
+                    int id = Integer.parseInt(partes[0].trim());
+                    String nome = partes[1].trim();
+                    String documento = partes[2].trim();
+                    String telefone = partes[3].trim();
+                    int quantidadePets = Integer.parseInt(partes[4].trim());
+                    int numeroApto = Integer.parseInt(partes[5].trim());
+                    String blocoApto = partes[6].trim();
+
+                    // Encontrar o apartamento correto
+                    Apartamento apartamentoEncontrado = null;
+                    for (Apartamento ap : apartamentos) {
+                        if (ap.getNumero() == numeroApto && ap.getBloco().equals(blocoApto)) {
+                            apartamentoEncontrado = ap;
+                            break;
+                        }
+                    }
+
+                    if (apartamentoEncontrado == null) {
+                        System.err.println("⚠ Linha " + linhaNumero + ": Apartamento " + numeroApto + "-" + blocoApto + " não encontrado");
+                        linha = br.readLine();
+                        continue;
+                    }
+
+                    // Criar o morador
+                    Morador m = new Morador(id, nome, documento, telefone, quantidadePets);
+
+                    // Associar morador ao apartamento
+                    m.setApartamento(apartamentoEncontrado);
+                    boolean adicionado = apartamentoEncontrado.adicionarMorador(m);
+
+                    if (!adicionado) {
+                        System.err.println("⚠ Linha " + linhaNumero + ": Não foi possível adicionar morador " + nome + " ao apartamento");
+                    }
+
+                    // Adicionar à lista de moradores
+                    moradores.add(m);
+
+                } catch (NumberFormatException e) {
+                    System.err.println("⚠ Linha " + linhaNumero + ": Erro ao converter números - " + e.getMessage());
+                } catch (CampoInvalidoException e) {
+                    System.err.println("⚠ Linha " + linhaNumero + ": " + e.getMessage());
                 }
             }
-            //se não encontrar o ap (não deveria acontecer)
-            if (apartamentoEncontrado == null) {
-                throw new IOException("Apartamento " + numeroApto + "-" + blocoApto +
-                        " não encontrado ao carregar moradores.");
-            }
-            // Criar o morador
-            Morador m = new Morador(id, nome, documento, telefone, quantidadePets);
-            moradores.add(m);
-            linha = br.readLine();
-
-            m.setApartamento(apartamentoEncontrado);
-            apartamentoEncontrado.adicionarMorador(m);
-
-            // Adicionar à lista de moradores
-            moradores.add(m);
-
             linha = br.readLine();
         }
         br.close();
+        System.out.println("✓ " + moradores.size() + " moradores lidos de " + caminhoArquivo);
         return moradores;
     }
 }

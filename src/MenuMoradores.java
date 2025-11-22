@@ -77,6 +77,7 @@ public class MenuMoradores {
 
     private void listarMoradores() {
         System.out.println("\n=== LISTA DE MORADORES ===");
+        System.out.println("DEBUG: Tamanho da lista = " + moradores.size());
 
         if (moradores.isEmpty()) {
             System.out.println("Nenhum morador cadastrado.");
