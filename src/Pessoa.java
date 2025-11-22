@@ -4,7 +4,7 @@ public abstract class Pessoa {
     private final String telefone;
 
 
-    public Pessoa(String nome, String documento, String telefone) throws CampoInvalidoException{
+    public Pessoa(String nome, String documento, String telefone) throws CampoInvalidoException {
         //verificações para nao adicionar nome, telefone e documento invalidos
         //caso seja nulo ou seja digitado apenas espaço
         //faz a verifação e logo em seguida atribui

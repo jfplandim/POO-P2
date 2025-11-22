@@ -23,7 +23,7 @@ public class Pagamento implements Serializable{
         cancelado
     }
 
-    public Pagamento( Morador morador,int Id,Double valor,String mes,Date dataPagamento,Date dataVencimento,Status status ){
+    public Pagamento(Morador morador, int Id, Double valor, String mes, Date dataPagamento, Date dataVencimento, Status status ){
         this.morador=morador;
         this.Id=Id;
         this.valor=valor;

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Morador extends Pessoa{
+public class Morador extends Pessoa {
     private final int id;
     private int quantidadePets;
     private final Apartamento apartamento;
@@ -9,7 +9,7 @@ public class Morador extends Pessoa{
     private List<Pagamento> pagamentos;
 
     public Morador(int id, String nome, String documento, String telefone, int quantidadePets,
-                    Apartamento apartamento) throws CampoInvalidoException{
+                    Apartamento apartamento) throws CampoInvalidoException {
         super(nome, documento, telefone);
         //validação do apartamento, este não pode ser nulo
         if(apartamento == null){

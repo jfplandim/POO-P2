@@ -47,19 +47,19 @@ public class Reserva {
      */
     public boolean cancelar(Date dataCancelamento) throws CampoInvalidoException {
         if (this.cancelada) {
-            throw new CampoInvalidoException ("Reserva já estava cancelada.");
+            throw new CampoInvalidoException("Reserva já estava cancelada.");
         }
         long diferencaMs = this.dataHoraInicio.getTime() - dataCancelamento.getTime();
         if (diferencaMs >= LIMITE_CANCELAMENTO_SEM_MULTA) {
             // Cancelamento feito com mais de 48h de antecedência
-            throw new CampoInvalidoException ("Reserva cancelada sem multa.");
+            throw new CampoInvalidoException("Reserva cancelada sem multa.");
         } else if (diferencaMs > 0) {
             // Cancelamento feito com menos de 48h, mas antes do início
             System.out.println("Reserva cancelada com multa.");
             // Lógica para aplicar multa (ex: registrar no sistema financeiro, etc.)
         } else {
             // Tentativa de cancelar após o início da reserva
-            throw new CampoInvalidoException ("Não é possível cancelar uma reserva após ou no horário de início.");
+            throw new CampoInvalidoException("Não é possível cancelar uma reserva após ou no horário de início.");
         }
         this.cancelada = true;
         return true;

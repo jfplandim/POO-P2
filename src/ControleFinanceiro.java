@@ -4,9 +4,9 @@ import java.util.List;
 import java.io.File;
 
 
-public class controleFinanceiro {
+public class ControleFinanceiro {
     private List<Pagamento> pagamentos;
-    private List<Chamado> chamados;
+    private List<ChamadoManutencao> chamados;
     private final String arquivo="arquivos-pagamentos";
 
 
@@ -14,12 +14,12 @@ public class controleFinanceiro {
         return pagamentos;
     }
 
-    public List<Chamado> getChamados() {
+    public List<ChamadoManutencao> getChamados() {
         return chamados;
     }
 
     //construtor
-    public controleFinanceiro(){
+    public ControleFinanceiro(){
         this.pagamentos= carregarPagamentos();
         this.chamados=new ArrayList<>();
     }
@@ -56,7 +56,7 @@ public class controleFinanceiro {
         double saldoDisponivel=totalrecebido-manutencao;
 
         long chamadosAbertos=chamados.stream()
-                .filter(c-> c.getStatus().equals("aberto"))
+                .filter(c-> c.getStatus() == StatusChamado.ABERTO)
                 .count();
         return String.format(
                 "================================================\n" +
