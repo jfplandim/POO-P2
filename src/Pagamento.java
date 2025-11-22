@@ -43,8 +43,7 @@ public class Pagamento implements Serializable{
 
         LocalDate dia=LocalDate.now().plusDays(1);
        if(!recebido() && dataVencimento.toInstant().isBefore(
-               LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
-       )){
+               LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())){
            return true;
        }
        return false;
