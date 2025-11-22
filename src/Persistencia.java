@@ -83,7 +83,7 @@ public class Persistencia {
                         " não encontrado ao carregar moradores.");
             }
             // Criar o morador
-            Morador m = new Morador(id, nome, documento, telefone, quantidadePets, apartamentoEncontrado);
+            Morador m = new Morador(id, nome, documento, telefone, quantidadePets);
             moradores.add(m);
             linha = br.readLine();
         }

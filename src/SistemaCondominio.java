@@ -21,7 +21,7 @@ public class SistemaCondominio {
         this.controleFinanceiro = new ControleFinanceiro();
         this.chamados = new ArrayList<>();
 
-        this.menuMoradores = new MenuMoradores(this);
+        this.menuMoradores = new MenuMoradores(moradores, apartamentos);
     }
 
     public void abrirChamadoManutencao() {
