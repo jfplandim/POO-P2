@@ -11,6 +11,13 @@ public class SistemaCondominio {
     private ControleFinanceiro controleFinanceiro;
     private List<ChamadoManutencao> chamados;
     private MenuMoradores menuMoradores;
+    private MenuApartamentos menuApartamentos;
+    private MenuVisitantes menuVisitantes;
+    private MenuReservas menuReservas;
+    private MenuPagamentos menuPagamentos;
+
+
+
 
     public SistemaCondominio() {
         this.moradores = new ArrayList<>();
@@ -22,6 +29,11 @@ public class SistemaCondominio {
         this.chamados = new ArrayList<>();
 
         this.menuMoradores = new MenuMoradores(moradores, apartamentos);
+        menuApartamentos = new MenuApartamentos(apartamentos);
+        menuVisitantes = new MenuVisitantes(visitantes, moradores);
+        menuReservas = new MenuReservas(reservas);
+        menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(), moradores);
+
     }
 
     public void abrirChamadoManutencao() {
@@ -230,23 +242,19 @@ public class SistemaCondominio {
                     break;
 
                 case 2:
-                    System.out.println("Menu de Apartamentos - (Pessoa 1)");
-                    // TODO: chamar métodos da pessoa 1
+                    menuApartamentos.exibir();
                     break;
 
                 case 3:
-                    System.out.println("Menu de Visitantes - (Pessoa 3)");
-                    // TODO: chamar métodos da pessoa 3
+                    menuVisitantes.exibir();
                     break;
 
                 case 4:
-                    System.out.println("Menu de Reservas - (Pessoa 2)");
-                    // TODO: chamar métodos da pessoa 2
+                    menuReservas.exibir();
                     break;
 
                 case 5:
-                    System.out.println("Menu de Pagamentos - (Pessoa 4)");
-                    // TODO: chamar métodos da pessoa 4
+                    menuPagamentos.exibir();
                     break;
 
                 case 6:
@@ -262,5 +270,10 @@ public class SistemaCondominio {
             }
         }
 
+    }
+
+    public static void main(String[] args) {
+        SistemaCondominio sistema = new SistemaCondominio();
+        sistema.exibirMenu();
     }
 }
