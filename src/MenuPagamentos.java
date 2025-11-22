@@ -24,8 +24,7 @@ public class MenuPagamentos {
             System.out.println("\n===== MENU DE PAGAMENTOS =====");
             System.out.println("1 - Registrar Pagamento");
             System.out.println("2 - Listar Pagamentos");
-            System.out.println("3 - Pagamentos Recebidos");
-            System.out.println("4 - Pagamentos Atrasados");
+            System.out.println("3 - gerar relatorios de pagamentos");
             System.out.println("0 - Voltar");
             System.out.print("Escolha: ");
 
