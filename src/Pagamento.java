@@ -1,5 +1,5 @@
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.ZoneId;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -40,7 +40,11 @@ public class Pagamento implements Serializable{
     }
 
     public  boolean Atrasado(){
-       if(!recebido()&& dataVencimento.toInstant().isBefore(Instant.from(LocalDate.now()))){
+
+        LocalDate dia=LocalDate.now().plusDays(1);
+       if(!recebido() && dataVencimento.toInstant().isBefore(
+               LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+       )){
            return true;
        }
        return false;
