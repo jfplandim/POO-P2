@@ -65,6 +65,7 @@ public class SistemaCondominio {
             // Atualizar os menus com as listas carregadas
             this.menuMoradores = new MenuMoradores(moradores, apartamentos);
             this.menuApartamentos = new MenuApartamentos(apartamentos);
+            this.menuVisitantes = new MenuVisitantes(visitantes,moradores);
 
         } catch (IOException e) {
             System.err.println("\n⚠ Arquivos não encontrados: " + e.getMessage());
