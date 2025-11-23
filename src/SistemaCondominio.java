@@ -12,6 +12,7 @@ public class SistemaCondominio {
     private List<AreaComum> areasComuns;
     private ControleFinanceiro controleFinanceiro;
     private List<ChamadoManutencao> chamados;
+    private ControleVisitante controleVisitante;
     private MenuMoradores menuMoradores;
     private MenuApartamentos menuApartamentos;
     private MenuVisitantes menuVisitantes;
@@ -25,20 +26,28 @@ public class SistemaCondominio {
         this.controleFinanceiro = new ControleFinanceiro();
         this.chamados = new ArrayList<>();
 
+        carregarTodosDados();
+
+        this.controleVisitante = new ControleVisitante(moradores);
         this.menuMoradores = new MenuMoradores(moradores, apartamentos);
         this.menuApartamentos = new MenuApartamentos(apartamentos);
-        this.menuVisitantes = new MenuVisitantes(visitantes, moradores);
+        this.menuVisitantes = new MenuVisitantes(controleVisitante, moradores);
         this.menuReservas = new MenuReservas(gerenciadorReservas);
         this.menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(), moradores);
 
-        carregarTodosDados();
+        System.out.println("✓ Sistema inicializado com sucesso!\n");
     }
 
     // Metodo para salvar todos os dados
     public void salvarTodosDados() {
         try {
+            System.out.println("\n=== SALVANDO DADOS ===");
             Persistencia.salvarApartamentos(apartamentos, "apartamentos.txt");
             Persistencia.salvarMoradores(moradores, "moradores.txt");
+            // Salvar visitantes se o controle existir
+            if (controleVisitante != null) {
+                controleVisitante.salvarVisitantes();
+            }
             System.out.println("\n✓ Dados salvos com sucesso!");
         } catch (IOException e) {
             System.err.println("\n✗ Erro ao salvar dados: " + e.getMessage());
@@ -50,7 +59,7 @@ public class SistemaCondominio {
         try {
             System.out.println("\n=== INICIANDO CARREGAMENTO ===");
 
-            // Ordem importante: apartamentos primeiro!
+            // Ordem importante: apartamentos primeiro
             apartamentos = Persistencia.carregarApartamentos("apartamentos.txt");
             System.out.println("✓ Apartamentos carregados: " + apartamentos.size());
 
@@ -58,10 +67,10 @@ public class SistemaCondominio {
             System.out.println("✓ Moradores carregados: " + moradores.size());
 
             // Atualizar os menus com as listas carregadas
-            this.menuMoradores = new MenuMoradores(moradores, apartamentos);
-            this.menuApartamentos = new MenuApartamentos(apartamentos);
-            this.menuVisitantes = new MenuVisitantes(visitantes,moradores);
-            this.menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(),moradores);
+            //this.menuMoradores = new MenuMoradores(moradores, apartamentos);
+           // this.menuApartamentos = new MenuApartamentos(apartamentos);
+            //this.menuVisitantes = new MenuVisitantes(controleVisitante,moradores);
+            //this.menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(),moradores);
 
         } catch (IOException e) {
             System.err.println("\n⚠ Arquivos não encontrados: " + e.getMessage());

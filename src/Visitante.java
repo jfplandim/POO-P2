@@ -52,12 +52,14 @@ public class Visitante extends Pessoa {
     }
     //metodo para formatar e gerar o relatorio de visita
         @Override
-    public String toString(){
-        String saidaFormatada=(dataHoraSaida !=null)? dataHoraSaida.toString():"Ainda no condomínio";
-        return "Visitante" + getNome() +
-                "Doc: " + getDocumento() +
-                "Morador: "+ moradorVisitado.getNome() +
-                "Entrada: " + dataHoraEntrada +
-                "Saída: "+ saidaFormatada;
-    }
+        public String toString() {
+            String saidaFormatada = (dataHoraSaida != null) ? dataHoraSaida.toString() : "Ainda no condomínio";
+
+            return "Visitante: " + getNome() + "\n" +
+                    "Documento: " + getDocumento() + "\n" +
+                    "Telefone: " + getTelefone() + "\n" +
+                    "Morador visitado: " + moradorVisitado.getNome() + "\n" +
+                    "Entrada: " + dataHoraEntrada + "\n" +
+                    "Saída: " + saidaFormatada;
+        }
 }

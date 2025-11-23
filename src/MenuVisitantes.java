@@ -3,11 +3,11 @@ import java.util.Scanner;
 
 public class MenuVisitantes {
 
-    private List<Visitante> visitantes;
+    private ControleVisitante controleVisitante;
     private List<Morador> moradores;
 
-    public MenuVisitantes(List<Visitante> visitantes, List<Morador> moradores) {
-        this.visitantes = visitantes;
+    public MenuVisitantes(ControleVisitante controleVisitante, List<Morador> moradores) {
+        this.controleVisitante = controleVisitante;
         this.moradores = moradores;
     }
 
@@ -69,19 +69,17 @@ public class MenuVisitantes {
             }
 
             if (moradorVisitado == null) {
-                System.out.println("Morador não encontrado!");
+                System.out.println("✗ Morador não encontrado!");
                 return;
             }
 
             Visitante v = new Visitante(nome, doc, tel, moradorVisitado);
+            controleVisitante.registrarEntrada(v);
 
-            visitantes.add(v);
-
-            System.out.println("Entrada registrada com sucesso!");
             System.out.println("Data/Hora de entrada: " + v.getDataHoraEntrada());
 
         } catch (Exception e) {
-            System.out.println("Erro ao registrar entrada: " + e.getMessage());
+            System.out.println("✗ Erro ao registrar entrada: " + e.getMessage());
         }
     }
 
@@ -93,7 +91,9 @@ public class MenuVisitantes {
         System.out.print("Documento do visitante: ");
         String doc = sc.nextLine();
 
-        Visitante visitante = null;
+        controleVisitante.registrarSaida(doc);
+
+       /* Visitante visitante = null;
         for (Visitante v : visitantes) {
             if (v.getDocumento().equalsIgnoreCase(doc)) {
                 visitante = v;
@@ -113,11 +113,11 @@ public class MenuVisitantes {
 
         } catch (Exception e) {
             System.out.println("Erro ao registrar saída: " + e.getMessage());
-        }
+        } */
     }
 
     private void listarVisitantes() {
-        System.out.println("\n=== LISTA DE VISITANTES ===");
+      /*  System.out.println("\n=== LISTA DE VISITANTES ===");
 
         if (visitantes.isEmpty()) {
             System.out.println("Nenhum visitante registrado.");
@@ -133,5 +133,7 @@ public class MenuVisitantes {
             System.out.println("Saída: " + (v.getDataHoraSaida() != null ?
                     v.getDataHoraSaida() : "Ainda no condomínio"));
         }
+        */
+       controleVisitante.gerarRelatorioVisitas();
     }
 }

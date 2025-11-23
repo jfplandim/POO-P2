@@ -16,7 +16,7 @@ public class ControleVisitante {
     //metodo registrar entrada, que é chamada pelo sistemaprincipal
     public void registrarEntrada(Visitante novoVisitante) {
         this.visitantes.add(novoVisitante);
-        System.out.println("Entrada do visitante " + novoVisitante.getNome() + "registrada.");
+        System.out.println(" Entrada do visitante " + novoVisitante.getNome() + "registrada.");
         salvarVisitantes();
     }
 
@@ -42,13 +42,24 @@ public class ControleVisitante {
 
     //gera o relatorio das visitas
     public void gerarRelatorioVisitas() {
-        System.out.println("---Relatorio de Visitas---");
+        System.out.println("\n=== RELATÓRIO DE VISITAS ===");
+
         if (visitantes.isEmpty()) {
             System.out.println("Nenhuma visita registrada.");
             return;
         }
+
+        long visitantesNoCondominio = visitantes.stream()
+                .filter(v -> v.getDataHoraSaida() == null)
+                .count();
+
+        System.out.println("Total de visitas: " + visitantes.size());
+        System.out.println("Visitantes no condomínio: " + visitantesNoCondominio);
+        System.out.println("========================================");
+
         for (Visitante v : visitantes) {
             System.out.println(v.toString());
+            System.out.println("========================================");
         }
     }
 
