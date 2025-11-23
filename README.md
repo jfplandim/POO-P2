@@ -308,7 +308,7 @@ O sistema implementa tratamento robusto de erros:
 **Curso:** Engenharia de Software  
 **Email:** jose.sobrinho@somosicev.com
 
-**Nome**: João Guiherme Aragão Malta   
+**Nome:** João Guiherme Aragão Malta   
 **Curso**: Engenharia de Software  
 **Email:** joao.malta@somosicev.com
 
