@@ -304,24 +304,24 @@ O sistema implementa tratamento robusto de erros:
 
 ## 👥 Autor(es)
 
-José Francisco Paes Landim Sobrinho     
-Curso: Engenharia de Software  
+**Nome:** José Francisco Paes Landim Sobrinho     
+**Curso:** Engenharia de Software  
 **Email:** jose.sobrinho@somosicev.com
 
-**[Seu Nome Completo]**   
-Curso: [Seu Curso]  
+**Nome**: [Seu Nome Completo]**   
+**Curso**: [Seu Curso]  
 **Email:** [Seu email acadêmico]
 
-**[Seu Nome Completo]**   
-Curso: [Seu Curso]  
+**Nome:** [Seu Nome Completo]**   
+**Curso:** [Seu Curso]  
 **Email:** [Seu email acadêmico]
 
-**[Seu Nome Completo]**   
-Curso: [Seu Curso]  
+**Nome:** [Seu Nome Completo]**   
+**Curso:** [Seu Curso]  
 **Email:** [Seu email acadêmico]
 
-**[Seu Nome Completo]**   
-Curso: [Seu Curso]   
+**Nome:** [Seu Nome Completo]**   
+**Curso:** [Seu Curso]   
 **Email:** [Seu email acadêmico]
 
 ---
