@@ -21,18 +21,17 @@ public class ControleFinanceiro {
     }
 
     // ============================================================
-    // SALVAR PAGAMENTOS EM TXT (AGORA COM NOME)
+    // SALVAR AGORA SALVA TODA A LISTA (COM OS ANTIGOS + NOVOS)
     // ============================================================
     public void salvarPagamentosTXT(String arquivo) throws IOException {
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(arquivo));
 
         for (Pagamento p : pagamentos) {
-
             String linha =
                     p.getValor() + ";" +
                             p.getMorador().getDocumento() + ";" +
-                            p.getMorador().getNome() + ";" +        // <--- NOME ADICIONADO
+                            p.getMorador().getNome() + ";" +
                             p.getStatus() + ";" +
                             p.getId();
 
@@ -41,25 +40,23 @@ public class ControleFinanceiro {
         }
 
         bw.close();
-        System.out.println("✓ Pagamentos salvos em " + arquivo);
+        System.out.println("✓ Pagamentos atualizados em " + arquivo);
     }
 
     // ============================================================
-    // CARREGAR PAGAMENTOS DO TXT (LENDO O NOME TBM)
+    // CARREGA TODOS OS PAGAMENTOS QUE JÁ EXISTEM NO TXT
     // ============================================================
     public void carregarPagamentosTXT(String arquivo, List<Morador> moradores) throws IOException {
 
         File f = new File(arquivo);
         if (!f.exists()) {
-            System.out.println("Nenhum arquivo de pagamentos encontrado.");
-            return;
+            return; // não existe → primeira execução
         }
 
         BufferedReader br = new BufferedReader(new FileReader(f));
         String linha = br.readLine();
 
         while (linha != null) {
-
             linha = linha.trim();
 
             if (!linha.isEmpty()) {
@@ -68,7 +65,7 @@ public class ControleFinanceiro {
 
                 double valor = Double.parseDouble(partes[0]);
                 String documento = partes[1];
-                String nomeIgnorado = partes[2];            // <--- NOME LIDO MAS NÃO USADO NA LÓGICA
+                String nomeIgnorado = partes[2];
                 Pagamento.Status status = Pagamento.Status.valueOf(partes[3]);
                 int id = Integer.parseInt(partes[4]);
 
@@ -76,8 +73,8 @@ public class ControleFinanceiro {
 
                 if (m != null) {
                     Pagamento p = new Pagamento(m, id, valor, status);
-                    m.getPagamentos().add(p);
                     pagamentos.add(p);
+                    m.getPagamentos().add(p);
                 }
             }
 
@@ -85,7 +82,7 @@ public class ControleFinanceiro {
         }
 
         br.close();
-        System.out.println("✓ Pagamentos carregados: " + pagamentos.size());
+        System.out.println("✓ Pagamentos carregados do arquivo: " + pagamentos.size());
     }
 
     private Morador buscarMoradorPorDocumento(List<Morador> moradores, String documento) {
@@ -95,34 +92,5 @@ public class ControleFinanceiro {
             }
         }
         return null;
-    }
-
-    // ============================================================
-    // RELATÓRIO FINANCEIRO
-    // ============================================================
-    public void gerarRelatorioFinanceiroTXT(String arquivo) throws IOException {
-
-        BufferedWriter bw = new BufferedWriter(new FileWriter(arquivo));
-
-        bw.write("======= RELATÓRIO FINANCEIRO =======\n\n");
-
-        double total = 0;
-
-        for (Pagamento p : pagamentos) {
-
-            bw.write("-----------------------------------\n");
-            bw.write("ID: " + p.getId() + "\n");
-            bw.write("Morador: " + p.getMorador().getNome() + "\n");  // <--- NOME
-            bw.write("Documento: " + p.getMorador().getDocumento() + "\n");
-            bw.write("Valor: R$ " + p.getValor() + "\n");
-            bw.write("Status: " + p.getStatus() + "\n");
-
-            total += p.getValor();
-        }
-
-        bw.write("\nTOTAL GERAL: R$ " + total + "\n");
-
-        bw.close();
-        System.out.println("✓ Relatório financeiro salvo em " + arquivo);
     }
 }

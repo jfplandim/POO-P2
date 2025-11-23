@@ -11,7 +11,15 @@ public class MenuPagamentos {
         this.pagamentos = pagamentos;
         this.moradores = moradores;
         this.controleFinanceiro = new ControleFinanceiro();
-        this.controleFinanceiro.getPagamentos().addAll(pagamentos);
+
+        // carregar pagamentos já existentes no arquivo
+        try {
+            controleFinanceiro.carregarPagamentosTXT("pagamentos.txt", moradores);
+            this.pagamentos.clear();
+            this.pagamentos.addAll(controleFinanceiro.getPagamentos());
+        } catch (Exception e) {
+            System.out.println("Nenhum pagamento carregado: " + e.getMessage());
+        }
     }
 
     public void exibir() {
@@ -24,38 +32,32 @@ public class MenuPagamentos {
             System.out.println("1 - Registrar Pagamento");
             System.out.println("2 - Listar Pagamentos");
             System.out.println("3 - Salvar Pagamentos em TXT");
-            System.out.println("4 - Gerar Relatório Financeiro");
             System.out.println("0 - Voltar");
             System.out.print("Escolha: ");
 
             try {
                 opcao = Integer.parseInt(sc.nextLine());
             } catch (Exception e) {
-                System.out.println("Entrada inválida!");
                 continue;
             }
 
             switch (opcao) {
                 case 1 -> registrarPagamento();
                 case 2 -> listarPagamentos();
-                case 3 -> salvarPagamentosTXT();
-                case 4 -> gerarRelatorioFinanceiroTXT();
+                case 3 -> salvarTXT();
                 case 0 -> System.out.println("Voltando...");
                 default -> System.out.println("Opção inválida!");
             }
         }
     }
 
-
     // ============================================================
-    // REGISTRAR PAGAMENTO
+    // REGISTRAR PAGAMENTO (agora salva permanentemente)
     // ============================================================
     private void registrarPagamento() {
         Scanner sc = new Scanner(System.in);
 
         try {
-            System.out.println("\n=== REGISTRAR PAGAMENTO ===");
-
             System.out.print("Documento do morador: ");
             String doc = sc.nextLine();
 
@@ -73,8 +75,6 @@ public class MenuPagamentos {
                 return;
             }
 
-            System.out.println("Morador encontrado: " + morador.getNome()); // NOVO
-
             System.out.print("ID do pagamento: ");
             int id = Integer.parseInt(sc.nextLine());
 
@@ -87,57 +87,44 @@ public class MenuPagamentos {
             controleFinanceiro.getPagamentos().add(p);
             morador.getPagamentos().add(p);
 
-            System.out.println("Pagamento registrado com sucesso!");
+            // salvar imediatamente
+            salvarTXT();
+
+            System.out.println("✓ Pagamento registrado e salvo!");
 
         } catch (Exception e) {
-            System.out.println("Erro ao registrar pagamento: " + e.getMessage());
+            System.out.println("Erro ao registrar: " + e.getMessage());
         }
     }
 
-
     // ============================================================
-    // LISTAR PAGAMENTOS
+    // LISTAR
     // ============================================================
     private void listarPagamentos() {
-
         System.out.println("\n=== LISTA DE PAGAMENTOS ===");
-
         if (pagamentos.isEmpty()) {
-            System.out.println("Nenhum pagamento registrado.");
+            System.out.println("Nenhum pagamento.");
             return;
         }
 
         for (Pagamento p : pagamentos) {
-            System.out.println("----------------------------------");
+            System.out.println("--------------------------------");
             System.out.println("ID: " + p.getId());
-            System.out.println("Valor: R$ " + p.getValor());
-            System.out.println("Morador: " + p.getMorador().getNome());  // <--- NOME
+            System.out.println("Nome: " + p.getMorador().getNome());
             System.out.println("Documento: " + p.getMorador().getDocumento());
+            System.out.println("Valor: R$ " + p.getValor());
             System.out.println("Status: " + p.getStatus());
         }
     }
 
-
     // ============================================================
-    // SALVAR TXT
+    // SALVAR LISTA COMPLETA NO TXT (persistência cumulativa)
     // ============================================================
-    private void salvarPagamentosTXT() {
+    private void salvarTXT() {
         try {
             controleFinanceiro.salvarPagamentosTXT("pagamentos.txt");
         } catch (Exception e) {
             System.out.println("Erro ao salvar: " + e.getMessage());
-        }
-    }
-
-
-    // ============================================================
-    // RELATÓRIO TXT
-    // ============================================================
-    private void gerarRelatorioFinanceiroTXT() {
-        try {
-            controleFinanceiro.gerarRelatorioFinanceiroTXT("relatorio_financeiro.txt");
-        } catch (Exception e) {
-            System.out.println("Erro ao gerar relatório: " + e.getMessage());
         }
     }
 }
