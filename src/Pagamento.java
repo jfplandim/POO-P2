@@ -5,14 +5,14 @@ import java.util.Date;
 
 public class Pagamento implements Serializable{
     private final int Id;
-    private final String mes;
+    //private final String mes;
     private double valor;
     private  Date dataPagamento;
     private final Date dataVencimento;
     private final Status status;
     private  Morador morador;
     private double multa;
-    private boolean manutencao;
+    //private boolean manutencao;
 
 
 
@@ -23,16 +23,15 @@ public class Pagamento implements Serializable{
         cancelado
     }
 
-    public Pagamento(Morador morador, int Id, Double valor, String mes, Date dataPagamento, Date dataVencimento, Status status ){
+    public Pagamento(Morador morador, int Id, Double valor, Status status ){
         this.morador=morador;
         this.Id=Id;
         this.valor=valor;
-        this.mes=mes;
-        this.dataVencimento=dataVencimento;
-
+        //this.mes=mes;
+        this.dataVencimento=null;
         this.dataPagamento=null;
         this.status=Status.pendente;
-        this.multa=0.0;
+        //this.multa=0.0;
     }
 
     public void Multar(){
@@ -53,15 +52,15 @@ public class Pagamento implements Serializable{
         return dataPagamento!=null;
     }
 
-    public boolean isManutencao(){return  manutencao;}
+    //public boolean isManutencao(){return  manutencao;}
 
     public int getId() {return Id;}
 
-    public String getMes() {return mes;}
+
 
     public double getValor() {return valor;}
 
-    public Date getDataPagamento() {return dataPagamento;}
+    //public Date getDataPagamento() {return dataPagamento;}
 
     public Date getDataVencimento() {return dataVencimento;}
 

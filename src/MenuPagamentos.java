@@ -1,18 +1,17 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Date;
 
 public class MenuPagamentos {
 
     private List<Pagamento> pagamentos;
     private List<Morador> moradores;
-    ControleFinanceiro CF=new ControleFinanceiro();
+    private ControleFinanceiro controleFinanceiro;
 
     public MenuPagamentos(List<Pagamento> pagamentos, List<Morador> moradores) {
         this.pagamentos = pagamentos;
-        this.moradores =moradores;
-
+        this.moradores = moradores;
+        this.controleFinanceiro = new ControleFinanceiro();
+        this.controleFinanceiro.getPagamentos().addAll(pagamentos);
     }
 
     public void exibir() {
@@ -24,7 +23,8 @@ public class MenuPagamentos {
             System.out.println("\n===== MENU DE PAGAMENTOS =====");
             System.out.println("1 - Registrar Pagamento");
             System.out.println("2 - Listar Pagamentos");
-            System.out.println("3 - gerar relatorios de pagamentos");
+            System.out.println("3 - Salvar Pagamentos em TXT");
+            System.out.println("4 - Gerar Relatório Financeiro");
             System.out.println("0 - Voltar");
             System.out.print("Escolha: ");
 
@@ -38,29 +38,31 @@ public class MenuPagamentos {
             switch (opcao) {
                 case 1 -> registrarPagamento();
                 case 2 -> listarPagamentos();
-                case 3-> GerarRelatorioTXT();
+                case 3 -> salvarPagamentosTXT();
+                case 4 -> gerarRelatorioFinanceiroTXT();
                 case 0 -> System.out.println("Voltando...");
                 default -> System.out.println("Opção inválida!");
             }
         }
     }
 
-    // =========================================================
-    // 1 - Registrar Pagamento
-    // =========================================================
+
+    // ============================================================
+    // REGISTRAR PAGAMENTO
+    // ============================================================
     private void registrarPagamento() {
         Scanner sc = new Scanner(System.in);
 
         try {
             System.out.println("\n=== REGISTRAR PAGAMENTO ===");
 
-            // 1. Buscar morador
             System.out.print("Documento do morador: ");
             String doc = sc.nextLine();
 
             Morador morador = null;
+
             for (Morador m : moradores) {
-                if (m.getDocumento().equalsIgnoreCase(doc)) {
+                if (m.getDocumento().equals(doc)) {
                     morador = m;
                     break;
                 }
@@ -71,37 +73,18 @@ public class MenuPagamentos {
                 return;
             }
 
+            System.out.println("Morador encontrado: " + morador.getNome()); // NOVO
+
             System.out.print("ID do pagamento: ");
             int id = Integer.parseInt(sc.nextLine());
 
             System.out.print("Valor: ");
             double valor = Double.parseDouble(sc.nextLine());
 
-            System.out.print("Mês de referência: ");
-            String mes = sc.nextLine();
-
-            System.out.print("Pagamento de manutenção? (s/n): ");
-            boolean manutencao = sc.nextLine().equalsIgnoreCase("s");
-
-            // Define vencimento (hoje como exemplo)
-            Date vencimento = new Date();
-
-            Pagamento p = new Pagamento(
-                    morador,
-                    id,
-                    valor,
-                    mes,
-                    null,          // dataPagamento (será setado depois)
-                    vencimento,
-                    Pagamento.Status.pendente
-            );
-
-            // seta flag de manutenção
-            if (manutencao) {
-                // você precisa adicionar um setManutencao se quiser mudar isso
-            }
+            Pagamento p = new Pagamento(morador, id, valor, Pagamento.Status.pendente);
 
             pagamentos.add(p);
+            controleFinanceiro.getPagamentos().add(p);
             morador.getPagamentos().add(p);
 
             System.out.println("Pagamento registrado com sucesso!");
@@ -111,9 +94,10 @@ public class MenuPagamentos {
         }
     }
 
-    // =========================================================
-    // 2 - Listar todos os pagamentos
-    // =========================================================
+
+    // ============================================================
+    // LISTAR PAGAMENTOS
+    // ============================================================
     private void listarPagamentos() {
 
         System.out.println("\n=== LISTA DE PAGAMENTOS ===");
@@ -127,17 +111,33 @@ public class MenuPagamentos {
             System.out.println("----------------------------------");
             System.out.println("ID: " + p.getId());
             System.out.println("Valor: R$ " + p.getValor());
-            System.out.println("Mês: " + p.getMes());
-            System.out.println("Morador: " + p.getMorador().getNome());
+            System.out.println("Morador: " + p.getMorador().getNome());  // <--- NOME
             System.out.println("Documento: " + p.getMorador().getDocumento());
-            System.out.println("Recebido? " + (p.recebido() ? "Sim" : "Não"));
-            System.out.println("Atrasado? " + (p.Atrasado() ? "Sim" : "Não"));
+            System.out.println("Status: " + p.getStatus());
         }
     }
 
-  private void GerarRelatorioTXT(){
-        CF.salvarRelatorioFinanceiroTxt();
-  }
+
+    // ============================================================
+    // SALVAR TXT
+    // ============================================================
+    private void salvarPagamentosTXT() {
+        try {
+            controleFinanceiro.salvarPagamentosTXT("pagamentos.txt");
+        } catch (Exception e) {
+            System.out.println("Erro ao salvar: " + e.getMessage());
+        }
+    }
 
 
+    // ============================================================
+    // RELATÓRIO TXT
+    // ============================================================
+    private void gerarRelatorioFinanceiroTXT() {
+        try {
+            controleFinanceiro.gerarRelatorioFinanceiroTXT("relatorio_financeiro.txt");
+        } catch (Exception e) {
+            System.out.println("Erro ao gerar relatório: " + e.getMessage());
+        }
+    }
 }
