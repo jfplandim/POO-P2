@@ -302,7 +302,7 @@ O sistema implementa tratamento robusto de erros:
 
 ---
 
-## 👥 Autor(es)
+## 👥 Autores
 
 **Nome:** José Francisco Paes Landim Sobrinho     
 **Curso:** Engenharia de Software  
