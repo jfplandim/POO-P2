@@ -1,0 +1,4 @@
+100.0;123;jose;pendente;21;0.0
+100.0;123;jose;pendente;1;0.0
+12.0;123;jose;pago;3;0.0
+52.0;123;jose;pendente;4;0.0

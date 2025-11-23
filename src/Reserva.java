@@ -73,7 +73,7 @@ public class Reserva {
     }
 
     // Implementação da Regra: cancelamento com multa (48h)
-    /**
+    /*
      * Tenta cancelar a reserva e calcula se haverá multa.
      * @param dataCancelamento A data/hora atual no momento do cancelamento.
      * @return true se o cancelamento for bem-sucedido, false se já estiver cancelada.
@@ -109,5 +109,11 @@ public class Reserva {
                 " | Início: " + dataHoraInicio +
                 " | Duração: " + duracaoHoras + "h" +
                 (cancelada ? " [CANCELADA]" : "");
+    }
+
+
+     // Define o próximo ID (usado ao carregar reservas)
+    public static void setProximoId(int novoId) {
+        proximoId = novoId;
     }
 }

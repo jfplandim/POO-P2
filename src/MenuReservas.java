@@ -10,6 +10,7 @@ public class MenuReservas {
 
     public MenuReservas(GerenciadorReservas gerenciador) {
         this.gerenciador = gerenciador;
+        gerenciador.carregarReservas(); // ✅ Carrega automaticamente
     }
 
     public void exibir() {
@@ -21,6 +22,7 @@ public class MenuReservas {
             System.out.println("1 - Criar Reserva");
             System.out.println("2 - Listar Reservas");
             System.out.println("3 - Cancelar Reserva");
+            System.out.println("4 - Salvar Reservas");  // ✅ NOVO
             System.out.println("0 - Voltar");
             System.out.print("Escolha: ");
 
@@ -35,7 +37,11 @@ public class MenuReservas {
                 case 1 -> criarReserva();
                 case 2 -> listarReservas();
                 case 3 -> cancelarReserva();
-                case 0 -> System.out.println("Voltando...");
+                case 4 -> gerenciador.salvarReservas();  // ✅ NOVO
+                case 0 -> {
+                    gerenciador.salvarReservas();  // ✅ Salva ao sair
+                    System.out.println("Voltando...");
+                }
                 default -> System.out.println("Opção inválida!");
             }
         }

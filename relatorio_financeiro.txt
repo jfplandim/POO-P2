@@ -1,0 +1,33 @@
+=================================================
+    RELATÓRIO FINANCEIRO DO CONDOMÍNIO
+    Condomínio Vista Alegre
+=================================================
+Data: 23/11/2025 15:34:57
+
+--- RECEITAS ---
+Recebidos:  R$      12,00
+Pendentes:  R$     252,00
+Atrasados:  R$       0,00
+Multas:     R$       0,00
+TOTAL:      R$     264,00
+
+--- DESPESAS ---
+Manutenção: R$    5600,00
+
+--- BALANÇO ---
+Saldo:      R$   -5588,00
+
+--- INADIMPLÊNCIA ---
+Total de moradores:        1
+Moradores inadimplentes:   0
+Taxa de inadimplência:   0,00%
+
+--- CHAMADOS DE MANUTENÇÃO (FECHADOS) ---
+ID 1 - portao: R$ 5600,00
+
+--- LISTA DE INADIMPLENTES ---
+Nenhum inadimplente.
+
+=================================================
+Relatório gerado automaticamente pelo sistema.
+=================================================

@@ -2,10 +2,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.io.*;
 
 public class GerenciadorReservas {
     // Lista para "persistir" as reservas em memória (Regra: Persistência das reservas)
     private final List<Reserva> reservas;
+    private static final String ARQUIVO_RESERVAS = "reservas.txt";
 
     // Horário de funcionamento (8h às 22h)
     private static final int HORA_ABERTURA = 8;
@@ -15,7 +17,7 @@ public class GerenciadorReservas {
         this.reservas = new ArrayList<>();
     }
 
-    /**
+    /*
      * Limpa segundos e milissegundos de uma data, mantendo apenas hora e minutos
      * @param data Data a ser limpa
      * @return Nova data sem segundos e milissegundos
@@ -28,7 +30,7 @@ public class GerenciadorReservas {
         return cal.getTime();
     }
 
-    /**
+    /*
      * PASSO 1: Retorna os dias que têm pelo menos um horário disponível para uma área específica
      * @param dataInicio Data inicial do período de busca
      * @param dataFim Data final do período de busca
@@ -82,7 +84,7 @@ public class GerenciadorReservas {
         return diasDisponiveis;
     }
 
-    /**
+    /*
      * PASSO 2: Obtém os horários disponíveis para um dia e área específicos
      * @param data A data escolhida (apenas o dia é considerado)
      * @param duracaoDesejada Duração em horas que a pessoa quer reservar
@@ -122,7 +124,7 @@ public class GerenciadorReservas {
         return horariosDisponiveis;
     }
 
-    /**
+    /*
      * Verifica se um horário específico está disponível para uma área (sem conflitos)
      * @param horarioInicio Data e hora de início desejada
      * @param duracao Duração em horas
@@ -161,7 +163,7 @@ public class GerenciadorReservas {
         return true;
     }
 
-    /**
+    /*
      * Verifica se o período de uma nova reserva se sobrepõe a qualquer reserva existente da mesma área
      * @param novaReserva A Reserva a ser verificada.
      * @return true se houver conflito de horário, false caso contrário.
@@ -192,7 +194,7 @@ public class GerenciadorReservas {
         return false;
     }
 
-    /**
+    /*
      * Tenta adicionar uma nova reserva à lista.
      * IMPORTANTE: Automaticamente limpa segundos e milissegundos da data
      * @param dataHoraInicio Data e hora de início (será limpa automaticamente)
@@ -225,7 +227,7 @@ public class GerenciadorReservas {
         }
     }
 
-    /**
+    /*
      * Lista todas as reservas ativas (não canceladas)
      * @return Lista de reservas ativas
      */
@@ -239,7 +241,7 @@ public class GerenciadorReservas {
         return ativas;
     }
 
-    /**
+    /*
      * Lista todas as reservas ativas de um responsável específico
      * @param responsavel Nome do responsável
      * @return Lista de reservas do responsável
@@ -254,7 +256,7 @@ public class GerenciadorReservas {
         return reservasDoResponsavel;
     }
 
-    /**
+    /*
      * Busca uma reserva pelo ID
      * @param id ID da reserva
      * @return Reserva encontrada ou null
@@ -268,7 +270,7 @@ public class GerenciadorReservas {
         return null;
     }
 
-    /**
+    /*
      * Cancela uma reserva específica pelo ID
      * @param idReserva ID da reserva a ser cancelada
      * @return true se cancelada com sucesso, false caso contrário
@@ -286,6 +288,110 @@ public class GerenciadorReservas {
         } catch (CampoInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
             return false;
+        }
+    }
+
+
+    //Salva todas as reservas em arquivo TXT
+
+    public void salvarReservas() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARQUIVO_RESERVAS))) {
+            for (Reserva r : reservas) {
+                // Formato: ID;RESPONSAVEL;AREA;INICIO_MS;DURACAO;CANCELADA
+                String linha = String.format("%d;%s;%s;%d;%d;%b",
+                        r.getId(),
+                        r.getResponsavel(),
+                        r.getArea().name(), // Usa o nome do enum
+                        r.getDataHoraInicio().getTime(),
+                        r.getDuracaoHoras(),
+                        r.isCancelada()
+                );
+                bw.write(linha);
+                bw.newLine();
+            }
+            System.out.println("✓ Reservas salvas: " + reservas.size());
+        } catch (IOException e) {
+            System.err.println("✗ Erro ao salvar reservas: " + e.getMessage());
+        }
+    }
+
+
+     //Carrega todas as reservas do arquivo TXT
+
+    public void carregarReservas() {
+        File arquivo = new File(ARQUIVO_RESERVAS);
+        if (!arquivo.exists()) {
+            System.out.println("⚠ Arquivo de reservas não encontrado. Iniciando vazio.");
+            return;
+        }
+
+        reservas.clear();
+        int maiorId = 0;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                linha = linha.trim();
+                if (linha.isEmpty()) continue;
+
+                try {
+                    String[] partes = linha.split(";");
+                    if (partes.length != 6) continue;
+
+                    int id = Integer.parseInt(partes[0]);
+                    String responsavel = partes[1];
+                    AreaReservavel area = AreaReservavel.valueOf(partes[2]);
+                    long inicioMs = Long.parseLong(partes[3]);
+                    int duracao = Integer.parseInt(partes[4]);
+                    boolean cancelada = Boolean.parseBoolean(partes[5]);
+
+                    Date dataInicio = new Date(inicioMs);
+
+                    // Cria a reserva manualmente (sem validações de passado)
+                    Reserva r = criarReservaSemValidacao(id, dataInicio, duracao, responsavel, area, cancelada);
+                    reservas.add(r);
+
+                    // Atualiza o maior ID
+                    if (id > maiorId) {
+                        maiorId = id;
+                    }
+
+                } catch (Exception e) {
+                    System.err.println("⚠ Erro ao processar linha: " + linha);
+                }
+            }
+
+            // Atualiza o contador de IDs
+            Reserva.setProximoId(maiorId + 1);
+
+            System.out.println("✓ Reservas carregadas: " + reservas.size());
+
+        } catch (IOException e) {
+            System.err.println("✗ Erro ao carregar reservas: " + e.getMessage());
+        }
+    }
+
+
+     //Cria uma reserva sem validações (usado ao carregar do arquivo)
+
+    private Reserva criarReservaSemValidacao(int id, Date dataInicio, int duracao,
+                                             String responsavel, AreaReservavel area,
+                                             boolean cancelada) {
+        try {
+            Reserva r = new Reserva(dataInicio, duracao, responsavel, area);
+            // Usa reflexão para definir o ID e status de cancelamento
+            java.lang.reflect.Field fieldId = Reserva.class.getDeclaredField("id");
+            fieldId.setAccessible(true);
+            fieldId.set(r, id);
+
+            java.lang.reflect.Field fieldCancelada = Reserva.class.getDeclaredField("cancelada");
+            fieldCancelada.setAccessible(true);
+            fieldCancelada.set(r, cancelada);
+
+            return r;
+        } catch (Exception e) {
+            System.err.println("⚠ Erro ao criar reserva: " + e.getMessage());
+            return null;
         }
     }
 }

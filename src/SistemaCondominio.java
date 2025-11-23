@@ -18,6 +18,7 @@ public class SistemaCondominio {
     private MenuVisitantes menuVisitantes;
     private MenuReservas menuReservas;
     private MenuPagamentos menuPagamentos;
+    private RelatorioFinanceiro relatorioFinanceiro;
 
     public SistemaCondominio() {
         this.visitantes = new ArrayList<>();
@@ -34,6 +35,7 @@ public class SistemaCondominio {
         this.menuVisitantes = new MenuVisitantes(controleVisitante, moradores);
         this.menuReservas = new MenuReservas(gerenciadorReservas);
         this.menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(), moradores);
+        this.relatorioFinanceiro = new RelatorioFinanceiro(controleFinanceiro);
 
         System.out.println("✓ Sistema inicializado com sucesso!\n");
     }
@@ -44,10 +46,22 @@ public class SistemaCondominio {
             System.out.println("\n=== SALVANDO DADOS ===");
             Persistencia.salvarApartamentos(apartamentos, "apartamentos.txt");
             Persistencia.salvarMoradores(moradores, "moradores.txt");
-            // Salvar visitantes se o controle existir
+
+            // Salvar visitantes
             if (controleVisitante != null) {
                 controleVisitante.salvarVisitantes();
             }
+
+            // Salvar reservas
+            if (gerenciadorReservas != null) {
+                gerenciadorReservas.salvarReservas();
+            }
+
+            // Salvar chamados
+            if (controleFinanceiro != null) {
+                controleFinanceiro.salvarChamados("chamados.txt");
+            }
+
             System.out.println("\n✓ Dados salvos com sucesso!");
         } catch (IOException e) {
             System.err.println("\n✗ Erro ao salvar dados: " + e.getMessage());
@@ -66,11 +80,10 @@ public class SistemaCondominio {
             moradores = Persistencia.carregarMoradores("moradores.txt", apartamentos);
             System.out.println("✓ Moradores carregados: " + moradores.size());
 
-            // Atualizar os menus com as listas carregadas
-            //this.menuMoradores = new MenuMoradores(moradores, apartamentos);
-           // this.menuApartamentos = new MenuApartamentos(apartamentos);
-            //this.menuVisitantes = new MenuVisitantes(controleVisitante,moradores);
-            //this.menuPagamentos = new MenuPagamentos(controleFinanceiro.getPagamentos(),moradores);
+            // Carregar chamados
+            if (controleFinanceiro != null) {
+                controleFinanceiro.carregarChamados("chamados.txt");
+            }
 
         } catch (IOException e) {
             System.err.println("\n⚠ Arquivos não encontrados: " + e.getMessage());
@@ -278,7 +291,8 @@ public class SistemaCondominio {
             System.out.println("4 - Reservas");
             System.out.println("5 - Pagamentos");
             System.out.println("6 - Manutenção");
-            System.out.println("7 - Salvar Dados");
+            System.out.println("7 - Relatórios");
+            System.out.println("8 - Salvar Dados");
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -316,6 +330,10 @@ public class SistemaCondominio {
                     break;
 
                 case 7:
+                    menuRelatorios();
+                    break;
+
+                case 8:
                     salvarTodosDados();
                     break;
 
@@ -329,8 +347,64 @@ public class SistemaCondominio {
         }
     }
 
+    public void menuRelatorios() {
+        Scanner sc = new Scanner(System.in);
+        int opcao = -1;
+
+        while (opcao != 0) {
+            System.out.println("\n===== MENU DE RELATÓRIOS =====");
+            System.out.println("1 - Relatório Financeiro (Console)");
+            System.out.println("2 - Salvar Relatório Financeiro (TXT)");
+            System.out.println("3 - Relatório de Visitantes");
+            System.out.println("0 - Voltar");
+            System.out.print("Escolha: ");
+
+            try {
+                opcao = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida!");
+                continue;
+            }
+
+            switch (opcao) {
+                case 1:
+                    relatorioFinanceiro.gerarRelatorioConsole();
+                    break;
+
+                case 2:
+                    try {
+                        relatorioFinanceiro.salvarRelatorioTXT("relatorio_financeiro.txt");
+                    } catch (IOException e) {
+                        System.out.println("✗ Erro ao salvar relatório: " + e.getMessage());
+                    }
+                    break;
+
+                case 3:
+                    controleVisitante.gerarRelatorioVisitas();
+                    break;
+
+                case 0:
+                    System.out.println("Voltando...");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida!");
+            }
+        }
+    }
+
     public static void main(String[] args) {
         SistemaCondominio sistema = new SistemaCondominio();
+
+        //Adiciona hook para salvar ao fechar
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("\n=== SALVAMENTO AUTOMÁTICO ===");
+            sistema.salvarTodosDados();
+        }));
+
         sistema.exibirMenu();
+
+        // Salva antes de sair
+        sistema.salvarTodosDados();
     }
 }

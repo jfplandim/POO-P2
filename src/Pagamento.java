@@ -3,69 +3,164 @@ import java.time.ZoneId;
 import java.time.LocalDate;
 import java.util.Date;
 
-public class Pagamento implements Serializable{
-    private final int Id;
-    //private final String mes;
+import java.io.Serializable;
+import java.time.ZoneId;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
+
+public class Pagamento implements Serializable {
+    private final int id;
     private double valor;
-    private  Date dataPagamento;
+    private Date dataPagamento;
     private final Date dataVencimento;
-    private final Status status;
-    private  Morador morador;
+    private Status status;
+    private final Morador morador;
     private double multa;
-    //private boolean manutencao;
 
+    // Percentual de multa por atraso (2% por exemplo)
+    private static final double PERCENTUAL_MULTA = 0.02;
 
-
-    public enum Status{
+    public enum Status {
         pago,
         pendente,
         atrasado,
         cancelado
     }
 
-    public Pagamento(Morador morador, int Id, Double valor, Status status ){
-        this.morador=morador;
-        this.Id=Id;
-        this.valor=valor;
-        //this.mes=mes;
-        this.dataVencimento=null;
-        this.dataPagamento=null;
-        this.status=Status.pendente;
-        //this.multa=0.0;
+
+     //Construtor para criar novo pagamento
+     // A data de vencimento é definida para o dia 10 do mês seguinte
+
+    public Pagamento(Morador morador, int id, Double valor, Status status) {
+        this.morador = morador;
+        this.id = id;
+        this.valor = valor;
+        this.status = status; // ✅ CORRIGIDO: agora usa o status passado
+        this.dataPagamento = null;
+        this.multa = 0.0;
+
+        //Define data de vencimento (dia 10 do próximo mês)
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, 1); // próximo mês
+        cal.set(Calendar.DAY_OF_MONTH, 10); // dia 10
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        this.dataVencimento = cal.getTime();
     }
 
-    public void Multar(){
-       this.multa+=multa;
+
+     //Aplica multa ao pagamento atrasado
+
+    public void aplicarMulta() {
+        if (this.multa == 0.0) { // Aplica multa apenas uma vez
+            this.multa = this.valor * PERCENTUAL_MULTA;
+            System.out.println("⚠ Multa de R$ " + String.format("%.2f", this.multa) +
+                    " aplicada ao pagamento ID " + this.id);
+        }
     }
 
-    public  boolean Atrasado(){
 
-        LocalDate dia=LocalDate.now().plusDays(1);
-       if(!recebido() && dataVencimento.toInstant().isBefore(
-               LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())){
-           return true;
-       }
-       return false;
+     //Verifica se o pagamento está atrasado e atualiza o status
+
+    public void verificarAtraso() {
+        if (!recebido() && estaAtrasado()) {
+            if (this.status != Status.atrasado) {
+                this.status = Status.atrasado;
+                aplicarMulta();
+            }
+        }
     }
 
-    public boolean recebido(){
-        return dataPagamento!=null;
+
+      //Verifica se está atrasado (passou da data de vencimento)
+
+    public boolean estaAtrasado() {
+        Date hoje = new Date();
+        return !recebido() && dataVencimento.before(hoje);
     }
 
-    //public boolean isManutencao(){return  manutencao;}
 
-    public int getId() {return Id;}
+      //Verifica se o pagamento foi recebido
+
+    public boolean recebido() {
+        return dataPagamento != null;
+    }
 
 
+      //Registra o pagamento
 
-    public double getValor() {return valor;}
+    public void registrarPagamento() throws CampoInvalidoException {
+        if (recebido()) {
+            throw new CampoInvalidoException("Pagamento já foi registrado anteriormente.");
+        }
+        this.dataPagamento = new Date();
+        this.status = Status.pago;
+        System.out.println("✓ Pagamento ID " + this.id + " registrado com sucesso!");
+    }
 
-    //public Date getDataPagamento() {return dataPagamento;}
 
-    public Date getDataVencimento() {return dataVencimento;}
+     //Retorna o valor total (valor original + multa)
 
-    public Status getStatus() {return status;}
+    public double getValorTotal() {
+        return this.valor + this.multa;
+    }
 
-    public Morador getMorador() {return morador;}
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+
+    public Date getDataPagamento() {
+        return dataPagamento;
+    }
+
+    public Date getDataVencimento() {
+        return dataVencimento;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Morador getMorador() {
+        return morador;
+    }
+
+    public double getMulta() {
+        return multa;
+    }
+
+    // Setter para status (necessário ao carregar de arquivo)
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void setDataPagamento(Date dataPagamento) {
+        this.dataPagamento = dataPagamento;
+    }
+
+    public void setMulta(double multa) {
+        this.multa = multa;
+    }
+
+    @Override
+    public String toString() {
+        return "\n--- Pagamento ID " + id + " ---" +
+                "\nMorador: " + morador.getNome() +
+                "\nValor original: R$ " + String.format("%.2f", valor) +
+                "\nMulta: R$ " + String.format("%.2f", multa) +
+                "\nValor total: R$ " + String.format("%.2f", getValorTotal()) +
+                "\nVencimento: " + dataVencimento +
+                "\nPagamento: " + (dataPagamento != null ? dataPagamento : "Não pago") +
+                "\nStatus: " + status +
+                "\n----------------------------";
+    }
 }
 

@@ -21,6 +21,27 @@ public class ChamadoManutencao {
         this.custo = 0.0;
     }
 
+    //para persistencia
+    private ChamadoManutencao(int id, String areaAfetada, String descricao,
+                              StatusChamado status, double custo,
+                              Date dataAbertura, Date dataFechamento) {
+        this.id = id;
+        this.areaAfetada = areaAfetada;
+        this.descricao = descricao;
+        this.status = status;
+        this.custo = custo;
+        this.dataAbertura = dataAbertura;
+        this.dataFechamento = dataFechamento;
+    }
+
+    public static ChamadoManutencao restaurarDePersistencia(
+            int id, String areaAfetada, String descricao,
+            StatusChamado status, double custo,
+            Date dataAbertura, Date dataFechamento) {
+        return new ChamadoManutencao(id, areaAfetada, descricao,
+                status, custo, dataAbertura, dataFechamento);
+    }
+
     // Métodos de Negócio
     public void iniciarAtendimento() throws OperacaoInvalidaException {
        //se ja foi fechado, não pode mais iniciar atendimento
@@ -76,5 +97,12 @@ public class ChamadoManutencao {
                 "\nFechamento: " + fechamento +
                 "\nCusto: R$ " + String.format("%.2f", custo) +
                 "\n----------------------------\n";
+    }
+
+
+     // Define o próximo ID (usado ao carregar chamados)
+
+    public static void setProximoId(int novoId) {
+        proximoId = novoId;
     }
 }
