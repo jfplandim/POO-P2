@@ -313,11 +313,11 @@ O sistema implementa tratamento robusto de erros:
 **Email:** joao.malta@somosicev.com
 
 **Nome:** Ricardo Cronemberger Cruz Ruben Pereira  
-**Curso:** Engenharia de software
+**Curso:** Engenharia de software  
 **Email:** ricardo.ruben@somosicev.com
 
 **Nome:** Yuri Douglas Cavalcante Veloso Soares   
-**Curso:** Engenharia de software
+**Curso:** Engenharia de software  
 **Email:** yuri.soares@somosicev.com
 
 **Nome:** Gustavo nunes da silva pereira  
