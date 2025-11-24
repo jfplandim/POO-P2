@@ -312,9 +312,9 @@ O sistema implementa tratamento robusto de erros:
 **Curso**: Engenharia de Software  
 **Email:** joao.malta@somosicev.com
 
-**Nome:** [Seu Nome Completo]**   
-**Curso:** [Seu Curso]  
-**Email:** [Seu email acadêmico]
+**Nome:** Ricardo Cronemberger Cruz Ruben Pereira  
+**Curso:** Engenharia de software
+**Email:** ricardo.ruben@somosicev.com
 
 **Nome:** [Seu Nome Completo]**   
 **Curso:** [Seu Curso]  
